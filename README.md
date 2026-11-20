@@ -66,7 +66,9 @@ export default pragnya;
 </td>
 <td width="50%" align="center" valign="middle">
 
-<img src="https://user-images.githubusercontent.com/74038190/213760677-e45ca5f7-d1aa-4c2c-91e0-573819287304.gif" width="100%" alt="She Codes" />
+<div align="center">
+  <img src="./assets/girl_coding.gif" width="300" />
+</div>
 
 <br/>
 
@@ -127,8 +129,7 @@ export default pragnya;
 
 ## `$ git log --stats`
 
-<!-- TODO: replace YOUR-GITHUB-USERNAME with your GitHub username -->
-<img src="https://github-readme-streak-stats.herokuapp.com/?user=YOUR-GITHUB-USERNAME&theme=github-dark-blue&hide_border=true&ring=00ff88&fire=00ff88&currStreakLabel=7dd3fc&sideLabels=7dd3fc&dates=888" width="49%" />
+<img src="https://github-readme-streak-stats.herokuapp.com/?user=pragnyaraog&theme=github-dark-blue&hide_border=true&ring=00ff88&fire=00ff88&currStreakLabel=7dd3fc&sideLabels=7dd3fc&dates=888" width="49%" />
 
 </div>
 
