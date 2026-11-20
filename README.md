@@ -1,157 +1,721 @@
-import math, random
-from xml.sax.saxutils import escape as E
 
-NB="\u00a0"
-G=["01110","10001","10000","10111","10001","10001","01110"]
-P=["11110","10001","10001","11110","10000","10000","10000"]
-W,H=40,24
-grid=[[False]*W for _ in range(H)]
-def put(glyph,c0):
-    for r,row in enumerate(glyph):
-        for c,ch in enumerate(row):
-            if ch=="1":
-                for dy in range(2):
-                    for dx in range(3):
-                        grid[5+r*2+dy][c0+c*3+dx]=True
-put(G,3); put(P,22)
-rnd=random.Random(7)
-bg=[];fg=[]
-for y in range(H):
-    b="";f=""
-    for x in range(W):
-        if grid[y][x]:
-            edge=any(not(0<=y+dy<H and 0<=x+dx<W and grid[y+dy][x+dx]) for dx,dy in((1,0),(-1,0),(0,1),(0,-1)))
-            f+="%" if edge else "@"; b+=NB
-        else:
-            f+=NB
-            d=math.hypot((x-19.5)/19.5,(y-11.5)/11.5)
-            if d<1 and rnd.random()<0.85-0.65*d:
-                ramp=".·:+" if d<0.6 else ".·.:"
-                b+=rnd.choice(ramp)
-            else: b+=NB
-    bg.append(b);fg.append(f)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pragnya | Developer Profile</title>
 
-ROLES=["Full-Stack Developer","MERN Stack Builder","AI / RAG Builder"]
-CW=10.8
-
-THEMES={
-"dark":dict(bg1="#030712",bg2="#0B1220",glow1="#7C3AED",glow2="#22D3EE",panel="#0F172A",pa=".45",
-  text="#F8FAFC",muted="#94A3B8",label="#22D3EE",a1="#7C3AED",a2="#22D3EE",a3="#10B981",
-  pill="#1E293B",pills="#334155",grid="#22D3EE",gridop=".05",ascii1="#A78BFA",ascii2="#22D3EE",
-  bright1="#F8FAFC",bright2="#67E8F9",scan="#22D3EE",accent_text="#67E8F9"),
-"light":dict(bg1="#FFFFFF",bg2="#EEF6FF",glow1="#2563EB",glow2="#06B6D4",panel="#FFFFFF",pa=".65",
-  text="#0F172A",muted="#475569",label="#0369A1",a1="#2563EB",a2="#06B6D4",a3="#10B981",
-  pill="#EFF6FF",pills="#BFDBFE",grid="#2563EB",gridop=".06",ascii1="#7C9CF5",ascii2="#06B6D4",
-  bright1="#1E3A8A",bright2="#0E7490",scan="#2563EB",accent_text="#1D4ED8"),
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-def reveal(d,dur=.5):
-    return f'<set attributeName="opacity" to="0" begin="0s"/><animate attributeName="opacity" from="0" to="1" begin="{d}s" dur="{dur}s" fill="freeze"/>'
+body {
+    font-family: monospace;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 25px;
+    transition: 0.4s;
+}
 
-def role_block(T,x,y):
-    out=[];D=12.0
-    for i,r in enumerate(ROLES):
-        n=len(r);a=i/3;b=(i+1)/3;d=0.10
-        ts=[];vs=[]
-        if a>0: ts.append(0);vs.append(0)
-        for k in range(1,n+1):
-            ts.append(a+d*(k-1)/n);vs.append(k)
-        ts.append(1.0);vs.append(n)
-        kt=";".join(f"{t:.4f}" for t in ts);vl=";".join(str(v) for v in vs)
-        w=lambda v:v*CW
-        cl=";".join(f"{w(v):.1f}" for v in vs)
-        cx=";".join(f"{x+w(v):.1f}" for v in vs)
-        ok=[0];ov=[0]
-        if a>0: ok+= [a];ov+=[0]
-        ok+=[a+0.003,b-0.03,b-0.005,1.0];ov+=[1,1,0,0]
-        okt=";".join(f"{t:.4f}" for t in ok);ovl=";".join(str(v) for v in ov)
-        if i==0:
-            okt="0;0.30;0.3283;1";ovl="1;1;0;0"
-        out.append(f'''<clipPath id="rc{i}"><rect x="{x}" y="{y-20}" width="{w(n):.1f}" height="28"><animate attributeName="width" calcMode="discrete" values="{cl}" keyTimes="{kt}" dur="{D}s" repeatCount="indefinite"/></rect></clipPath>
-<g opacity="{1 if i==0 else 0}"><animate attributeName="opacity" values="{ovl}" keyTimes="{okt}" dur="{D}s" repeatCount="indefinite"/>
-<text x="{x}" y="{y}" font-size="18" font-weight="700" fill="{T['accent_text']}" clip-path="url(#rc{i})">{E(r)}</text>
-<rect x="{x+w(n):.1f}" y="{y-15}" width="8" height="18" fill="{T['a2']}"><animate attributeName="x" calcMode="discrete" values="{cx}" keyTimes="{kt}" dur="{D}s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/></rect></g>''')
-    return "\n".join(out)
+body.dark {
+    --bg1: #030712;
+    --bg2: #0b1220;
+    --panel: rgba(15, 23, 42, 0.85);
+    --text: #f8fafc;
+    --muted: #94a3b8;
+    --accent: #22d3ee;
+    --purple: #7c3aed;
+    --pill: #1e293b;
+    --border: #334155;
+    --glow: rgba(34, 211, 238, .2);
+    background: linear-gradient(135deg, var(--bg1), var(--bg2));
+}
 
-def build(name):
-    T=THEMES[name]
-    s=[]
-    A=s.append
-    label="Gujjula Pragnya - Computer Science student and full-stack developer. Skills: Java, Python, React.js, Node.js, MongoDB, Supabase. Projects: Focus Room and EduCampus."
-    A(f'<svg xmlns="http://www.w3.org/2000/svg" width="1180" height="610" viewBox="0 0 1180 610" role="img" aria-label="{E(label)}">')
-    A(f'<title>Gujjula Pragnya - GitHub profile</title><desc>{E(label)}</desc>')
-    A(f'''<defs>
-<linearGradient id="bgg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{T['bg1']}"/><stop offset="1" stop-color="{T['bg2']}"/></linearGradient>
-<radialGradient id="g1" cx=".15" cy=".1" r=".6"><stop offset="0" stop-color="{T['glow1']}" stop-opacity="{'.28' if name=='dark' else '.14'}"/><stop offset="1" stop-color="{T['glow1']}" stop-opacity="0"/><animate attributeName="cx" values=".15;.3;.15" dur="16s" repeatCount="indefinite"/></radialGradient>
-<radialGradient id="g2" cx=".9" cy=".95" r=".6"><stop offset="0" stop-color="{T['glow2']}" stop-opacity="{'.22' if name=='dark' else '.14'}"/><stop offset="1" stop-color="{T['glow2']}" stop-opacity="0"/><animate attributeName="cx" values=".9;.75;.9" dur="18s" repeatCount="indefinite"/></radialGradient>
-<linearGradient id="bd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{T['a1']}"/><stop offset=".5" stop-color="{T['a2']}"/><stop offset="1" stop-color="{T['a3']}"/><animateTransform attributeName="gradientTransform" type="rotate" from="0 .5 .5" to="360 .5 .5" dur="14s" repeatCount="indefinite"/></linearGradient>
-<linearGradient id="asc" gradientUnits="userSpaceOnUse" x1="0" y1="112" x2="0" y2="400"><stop offset="0" stop-color="{T['ascii1']}"/><stop offset="1" stop-color="{T['ascii2']}"/></linearGradient>
-<linearGradient id="asc2" gradientUnits="userSpaceOnUse" x1="0" y1="112" x2="0" y2="400"><stop offset="0" stop-color="{T['bright1']}"/><stop offset="1" stop-color="{T['bright2']}"/></linearGradient>
-<linearGradient id="scan" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="{T['scan']}" stop-opacity="0"/><stop offset=".5" stop-color="{T['scan']}" stop-opacity=".35"/><stop offset="1" stop-color="{T['scan']}" stop-opacity="0"/></linearGradient>
-<pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" fill="none" stroke="{T['grid']}" stroke-opacity="{T['gridop']}"/></pattern>
-<pattern id="lines" width="4" height="4" patternUnits="userSpaceOnUse"><rect width="4" height="1" fill="{T['grid']}" fill-opacity="{'.05' if name=='dark' else '.04'}"/></pattern>
-<clipPath id="lp"><rect x="32" y="64" width="408" height="514" rx="16"/></clipPath>
-<clipPath id="frame"><rect x="1" y="1" width="1178" height="608" rx="24"/></clipPath>
-<filter id="glow" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="{'3' if name=='dark' else '1.5'}" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-</defs>''')
-    A('<g font-family="ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace">')
-    A('<g clip-path="url(#frame)">')
-    A('<rect width="1180" height="610" fill="url(#bgg)"/><rect width="1180" height="610" fill="url(#g1)"/><rect width="1180" height="610" fill="url(#g2)"/><rect width="1180" height="610" fill="url(#grid)"/><rect width="1180" height="610" fill="url(#lines)"/>')
-    rr=random.Random(3)
-    for i in range(10):
-        px=rr.randint(40,1140);py=rr.randint(80,560);du=rr.randint(9,16)
-        A(f'<circle cx="{px}" cy="{py}" r="1.6" fill="{T["a2"]}" opacity=".5"><animate attributeName="cy" values="{py};{py-40};{py}" dur="{du}s" repeatCount="indefinite"/><animate attributeName="opacity" values=".15;.6;.15" dur="{du}s" repeatCount="indefinite"/></circle>')
-    A('</g>')
-    A('<rect x="1" y="1" width="1178" height="608" rx="24" fill="none" stroke="url(#bd)" stroke-width="1.5" stroke-opacity=".8"/>')
-    A(f'<g>{reveal(0.1,.4)}<circle cx="42" cy="34" r="6" fill="#FF5F56"/><circle cx="62" cy="34" r="6" fill="#FFBD2E"/><circle cx="82" cy="34" r="6" fill="#27C93F"/>')
-    A(f'<text x="110" y="38" font-size="13" fill="{T["muted"]}">pragnya@developer:~</text>')
-    A(f'<circle cx="1036" cy="34" r="4" fill="{T["a3"]}"><animate attributeName="opacity" values="1;.3;1" dur="2s" repeatCount="indefinite"/></circle><text x="1146" y="38" text-anchor="end" font-size="12" letter-spacing="2" fill="{T["a3"]}">[ ONLINE ]</text></g>')
-    for x,w in((32,408),(464,684)):
-        A(f'<rect x="{x}" y="64" width="{w}" height="514" rx="16" fill="{T["panel"]}" fill-opacity="{T["pa"]}" stroke="{T["a2"]}" stroke-opacity=".35"/>')
-        A(f'<rect x="{x+1}" y="65" width="{w-2}" height="40" rx="15" fill="#FFFFFF" fill-opacity="{".03" if name=="dark" else ".35"}"/>')
-    A(f'<g>{reveal(0.3,.4)}<text x="236" y="92" text-anchor="middle" font-size="12" letter-spacing="4" fill="{T["label"]}">VISUAL.MAP</text></g>')
-    A('<g clip-path="url(#lp)">')
-    A('<g><animateTransform attributeName="transform" type="translate" values="0 0;0 -3;0 0" dur="7s" repeatCount="indefinite"/>')
-    A(f'<g><animate attributeName="opacity" values=".85;1;.85" dur="5s" repeatCount="indefinite"/>')
-    for i in range(H):
-        y=124+i*12;d=round(0.55+0.05*i,2)
-        A(f'<g>{reveal(d,.25)}<text x="236" y="{y}" text-anchor="middle" font-size="11" fill="url(#asc)" opacity=".75" xml:space="preserve">{E(bg[i])}</text><text x="236" y="{y}" text-anchor="middle" font-size="11" font-weight="700" fill="url(#asc2)" filter="url(#glow)" xml:space="preserve">{E(fg[i])}</text></g>')
-    A('</g></g>')
-    A(f'<rect x="32" y="104" width="408" height="40" fill="url(#scan)"><animate attributeName="y" values="100;400;100" dur="7s" repeatCount="indefinite"/></rect>')
-    A('</g>')
-    A(f'<g>{reveal(2.0,.5)}<text x="236" y="440" text-anchor="middle" font-size="11" letter-spacing="3" fill="{T["muted"]}">[ PROFILE / ENGINEERING ]</text>')
-    A(f'<text x="236" y="474" text-anchor="middle" font-size="20" font-weight="700" fill="{T["accent_text"]}">Full-Stack Developer</text>')
-    A(f'<text x="236" y="502" text-anchor="middle" font-size="13" fill="{T["muted"]}">CS Undergrad · KITSW · Class of 2027</text>')
-    A(f'<text x="236" y="548" text-anchor="middle" font-size="13" fill="{T["text"]}">~/profile $ build --ship<tspan fill="{T["a2"]}"> ▌<animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite"/></tspan></text></g>')
-    A(f'<g>{reveal(0.4,.4)}<text x="806" y="92" text-anchor="middle" font-size="12" letter-spacing="4" fill="{T["label"]}">SYSTEM.INFO</text>')
-    A(f'<text x="494" y="124" font-size="13" fill="{T["muted"]}"><tspan fill="{T["a3"]}">pragnya@developer</tspan>:~$ ./profile.sh</text></g>')
-    LX,VX=600,620
-    def row(lbl,y,d):
-        return f'<text x="{LX}" y="{y}" text-anchor="end" font-size="12" letter-spacing="2" fill="{T["label"]}">&gt; {lbl}</text>'
-    A(f'<g>{reveal(1.0)}{row("NAME",166,0)}<text x="{VX}" y="168" font-size="26" font-weight="800" fill="{T["text"]}">Gujjula Pragnya</text></g>')
-    A(f'<g>{reveal(1.3)}{row("ROLE",206,0)}</g>')
-    A(f'<g>{reveal(1.3)}{role_block(T,VX,207)}</g>')
-    vals=[("LOCATION",238,"Telangana, India"),("EDUCATION",268,"B.Tech CSE · KITSW Warangal · CGPA 9.17"),("EXPERIENCE",298,"Full Stack Developer Intern · KITSW Startup"),("FOCUS",328,"Full-Stack · REST APIs · RAG / LLMs")]
-    for i,(l,y,v) in enumerate(vals):
-        A(f'<g>{reveal(1.6+i*.15)}{row(l,y,0)}<text x="{VX}" y="{y}" font-size="14" fill="{T["text"]}">{E(v)}</text></g>')
-    A(f'<g>{reveal(2.3)}{row("STACK",364,0)}')
-    rows=[["Java","Python","React.js","Node.js","Express.js"],["MongoDB","Supabase","MySQL","REST APIs","Git & GitHub"]]
-    k=0
-    for ri,rw in enumerate(rows):
-        x=VX;y=346+ri*32
-        for t in rw:
-            w=len(t)*7.4+30
-            A(f'<g><animateTransform attributeName="transform" type="translate" values="0 0;0 -1.5;0 0" dur="{5+k%3}s" begin="{k*.4}s" repeatCount="indefinite"/><rect x="{x:.1f}" y="{y}" width="{w:.1f}" height="24" rx="12" fill="{T["pill"]}" fill-opacity="{".7" if name=="dark" else ".9"}" stroke="{T["pills"]}"/><circle cx="{x+12:.1f}" cy="{y+12}" r="3" fill="{T["a3"]}"/><text x="{x+22:.1f}" y="{y+16}" font-size="12" fill="{T["text"]}">{E(t)}</text></g>')
-            x+=w+8;k+=1
-    A('</g>')
-    A(f'<g>{reveal(2.7)}{row("PROJECTS",450,0)}')
-    A(f'<text x="{VX}" y="450" font-size="14" fill="{T["text"]}"><tspan font-weight="700" fill="{T["accent_text"]}">Focus Room</tspan>  AI study assistant (RAG + LLMs)</text>')
-    A(f'<text x="{VX}" y="480" font-size="14" fill="{T["text"]}"><tspan font-weight="700" fill="{T["accent_text"]}">EduCampus</tspan>  MERN college management portal</text></g>')
-    A(f'<line x1="494" y1="508" x2="1118" y2="508" stroke="{T["a2"]}" stroke-opacity=".25"/>')
-    A(f'<g>{reveal(3.1)}{row("LINKS",542,0)}<text x="{VX}" y="542" font-size="14" fill="{T["text"]}">GitHub · LinkedIn · pragnyarao8@gmail.com</text></g>')
-    A('</g></svg>')
-    return "\n".join(s)
+body.light {
+    --bg1: #ffffff;
+    --bg2: #eef6ff;
+    --panel: rgba(255,255,255,.88);
+    --text: #0f172a;
+    --muted: #475569;
+    --accent: #2563eb;
+    --purple: #06b6d4;
+    --pill: #eff6ff;
+    --border: #bfdbfe;
+    --glow: rgba(37, 99, 235, .15);
+    background: linear-gradient(135deg, var(--bg1), var(--bg2));
+}
 
-for n in ("dark","light"):
-    open(f"{n}.svg","w",encoding="utf-8").write(build(n))
-print("Done: dark.svg and light.svg created")
+.container {
+    width: 100%;
+    max-width: 1180px;
+    padding: 2px;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #7c3aed, #22d3ee, #10b981);
+    animation: borderGlow 5s infinite alternate;
+}
+
+@keyframes borderGlow {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(80deg); }
+}
+
+.main {
+    position: relative;
+    border-radius: 22px;
+    padding: 25px;
+    background: var(--bg2);
+    overflow: hidden;
+    color: var(--text);
+}
+
+.main::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 10% 10%, var(--glow), transparent 35%),
+        radial-gradient(circle at 90% 90%, var(--glow), transparent 35%);
+    pointer-events: none;
+}
+
+.grid-bg {
+    position: absolute;
+    inset: 0;
+    opacity: .06;
+    background-image:
+        linear-gradient(var(--accent) 1px, transparent 1px),
+        linear-gradient(90deg, var(--accent) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    position: relative;
+    z-index: 1;
+}
+
+.dots {
+    display: flex;
+    gap: 10px;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.red { background: #ff5f56; }
+.yellow { background: #ffbd2e; }
+.green { background: #27c93f; }
+
+.terminal-title {
+    color: var(--muted);
+    margin-left: 20px;
+    font-size: 13px;
+}
+
+.online {
+    color: #10b981;
+    font-size: 12px;
+}
+
+.theme-btn {
+    background: var(--pill);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: monospace;
+}
+
+.content {
+    display: grid;
+    grid-template-columns: 408px 1fr;
+    gap: 24px;
+    position: relative;
+    z-index: 1;
+}
+
+.panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+.panel-heading {
+    text-align: center;
+    padding: 16px;
+    letter-spacing: 4px;
+    font-size: 12px;
+    color: var(--accent);
+    border-bottom: 1px solid var(--border);
+}
+
+.left-panel {
+    text-align: center;
+    padding-bottom: 20px;
+}
+
+.ascii {
+    height: 330px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+}
+
+.ascii pre {
+    font-size: 10px;
+    line-height: 1.05;
+    white-space: pre;
+    background: linear-gradient(var(--purple), var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: float 5s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.scan {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 35px;
+    background: linear-gradient(transparent, var(--glow), transparent);
+    animation: scan 5s linear infinite;
+}
+
+@keyframes scan {
+    0% { top: 0; }
+    100% { top: 100%; }
+}
+
+.profile-label {
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 3px;
+    margin-top: 10px;
+}
+
+.profile-title {
+    color: var(--accent);
+    margin: 15px 0;
+    font-size: 20px;
+}
+
+.profile-info {
+    font-size: 12px;
+    color: var(--muted);
+}
+
+.terminal {
+    margin-top: 20px;
+    color: var(--text);
+    font-size: 12px;
+}
+
+.cursor {
+    color: var(--accent);
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
+
+/* Right panel */
+
+.right-panel {
+    padding: 25px;
+}
+
+.command {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 25px;
+}
+
+.command span {
+    color: #10b981;
+}
+
+.info-row {
+    display: grid;
+    grid-template-columns: 125px 1fr;
+    gap: 10px;
+    margin-bottom: 25px;
+    align-items: center;
+}
+
+.label {
+    color: var(--accent);
+    font-size: 12px;
+    letter-spacing: 2px;
+    text-align: right;
+}
+
+.name {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.role {
+    color: var(--accent);
+    font-weight: bold;
+    font-size: 17px;
+    height: 25px;
+}
+
+.value {
+    font-size: 13px;
+    color: var(--text);
+}
+
+.skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.skill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--pill);
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    padding: 6px 12px;
+    font-size: 12px;
+    animation: skillFloat 4s ease-in-out infinite;
+}
+
+.skill:nth-child(even) {
+    animation-delay: 1s;
+}
+
+.skill::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    background: #10b981;
+    border-radius: 50%;
+}
+
+@keyframes skillFloat {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-2px); }
+}
+
+.project {
+    font-size: 13px;
+    margin-bottom: 18px;
+}
+
+.project strong {
+    color: var(--accent);
+}
+
+.divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 20px 0;
+}
+
+.links {
+    font-size: 13px;
+    line-height: 2;
+}
+
+.links a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.links a:hover {
+    text-decoration: underline;
+}
+
+.fade {
+    opacity: 0;
+    animation: reveal .8s ease forwards;
+}
+
+@keyframes reveal {
+    to { opacity: 1; }
+}
+
+/* Responsive */
+
+@media(max-width: 900px) {
+    .content {
+        grid-template-columns: 1fr;
+    }
+
+    .ascii {
+        height: 300px;
+    }
+}
+
+@media(max-width: 500px) {
+    body {
+        padding: 10px;
+    }
+
+    .main {
+        padding: 15px;
+    }
+
+    .right-panel {
+        padding: 15px;
+    }
+
+    .info-row {
+        grid-template-columns: 95px 1fr;
+    }
+
+    .label {
+        font-size: 10px;
+    }
+
+    .name {
+        font-size: 19px;
+    }
+
+    .role {
+        font-size: 14px;
+    }
+
+    .value {
+        font-size: 11px;
+    }
+
+    .ascii pre {
+        font-size: 8px;
+    }
+}
+</style>
+</head>
+
+<body class="dark">
+
+<div class="container">
+<div class="main">
+
+<div class="grid-bg"></div>
+
+<!-- Top Bar -->
+<div class="topbar">
+    <div style="display:flex;align-items:center">
+        <div class="dots">
+            <div class="dot red"></div>
+            <div class="dot yellow"></div>
+            <div class="dot green"></div>
+        </div>
+        <span class="terminal-title">pragnya@developer:~</span>
+    </div>
+
+    <div style="display:flex;gap:15px;align-items:center">
+        <span class="online">● [ ONLINE ]</span>
+        <button class="theme-btn" onclick="toggleTheme()">☀ / ☾</button>
+    </div>
+</div>
+
+<div class="content">
+
+<!-- Left Side -->
+<div class="panel left-panel fade">
+
+    <div class="panel-heading">VISUAL.MAP</div>
+
+    <div class="ascii">
+        <div class="scan"></div>
+        <pre id="asciiArt"></pre>
+    </div>
+
+    <div class="profile-label">[ PROFILE / ENGINEERING ]</div>
+
+    <div class="profile-title">Full-Stack Developer</div>
+
+    <div class="profile-info">
+        CS Undergrad · KITSW · Class of 2027
+    </div>
+
+    <div class="terminal">
+        ~/profile $ build --ship
+        <span class="cursor">▌</span>
+    </div>
+
+</div>
+
+<!-- Right Side -->
+<div class="panel right-panel fade">
+
+    <div class="panel-heading">SYSTEM.INFO</div>
+
+    <div class="command">
+        <span>pragnya@developer</span>:~$ ./profile.sh
+    </div>
+
+    <div class="info-row">
+        <div class="label">&gt; NAME</div>
+        <div class="name">Gujjula Pragnya</div>
+    </div>
+
+    <div class="info-row">
+        <div class="label">&gt; ROLE</div>
+        <div class="role" id="role"></div>
+    </div>
+
+    <div class="info-row">
+        <div class="label">&gt; LOCATION</div>
+        <div class="value">Telangana, India</div>
+    </div>
+
+    <div class="info-row">
+        <div class="label">&gt; EDUCATION</div>
+        <div class="value">B.Tech CSE · KITS Warangal · CGPA 9.17</div>
+    </div>
+
+    <div class="info-row">
+        <div class="label">&gt; EXPERIENCE</div>
+        <div class="value">Full Stack Developer Intern · KITSW Startup</div>
+    </div>
+
+    <div class="info-row">
+        <div class="label">&gt; FOCUS</div>
+        <div class="value">Full-Stack · REST APIs · RAG / LLMs</div>
+    </div>
+
+    <div class="info-row">
+        <div class="label">&gt; STACK</div>
+        <div>
+            <div class="skills">
+                <span class="skill">Java</span>
+                <span class="skill">Python</span>
+                <span class="skill">React.js</span>
+                <span class="skill">Node.js</span>
+                <span class="skill">Express.js</span>
+            </div>
+
+            <div class="skills" style="margin-top:10px">
+                <span class="skill">MongoDB</span>
+                <span class="skill">Supabase</span>
+                <span class="skill">MySQL</span>
+                <span class="skill">REST APIs</span>
+                <span class="skill">Git & GitHub</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-row">
+        <div class="label">&gt; PROJECTS</div>
+        <div>
+            <div class="project">
+                <strong>Focus Room</strong><br>
+                AI study assistant (RAG + LLMs)
+            </div>
+
+            <div class="project">
+                <strong>EduCampus</strong><br>
+                MERN college management portal
+            </div>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <div class="info-row">
+        <div class="label">&gt; LINKS</div>
+        <div class="links">
+            <a href="https://github.com/" target="_blank">GitHub</a> ·
+            <a href="https://linkedin.com/" target="_blank">LinkedIn</a> ·
+            <a href="mailto:pragnyarao8@gmail.com">pragnyarao8@gmail.com</a>
+        </div>
+    </div>
+
+</div>
+</div>
+</div>
+</div>
+
+<script>
+/* ASCII ART GENERATOR */
+
+const G = [
+"01110",
+"10001",
+"10000",
+"10111",
+"10001",
+"10001",
+"01110"
+];
+
+const P = [
+"11110",
+"10001",
+"10001",
+"11110",
+"10000",
+"10000",
+"10000"
+];
+
+const W = 40;
+const H = 24;
+
+let grid = Array.from(
+    {length:H},
+    () => Array(W).fill(false)
+);
+
+function put(glyph,c0) {
+    glyph.forEach((row,r) => {
+        [...row].forEach((ch,c) => {
+            if(ch === "1") {
+                for(let dy=0;dy<2;dy++) {
+                    for(let dx=0;dx<3;dx++) {
+                        grid[5+r*2+dy][c0+c*3+dx] = true;
+                    }
+                }
+            }
+        });
+    });
+}
+
+put(G,3);
+put(P,22);
+
+const NB = "\u00a0";
+const bg = [];
+const fg = [];
+
+function random(seed) {
+    let x = seed;
+    return function() {
+        x = (x * 16807) % 2147483647;
+        return (x - 1) / 2147483646;
+    };
+}
+
+const rnd = random(7);
+
+for(let y=0;y<H;y++) {
+    let b="",f="";
+
+    for(let x=0;x<W;x++) {
+        if(grid[y][x]) {
+
+            let edge = [
+                [1,0],[-1,0],[0,1],[0,-1]
+            ].some(([dx,dy]) => {
+                let ny=y+dy,nx=x+dx;
+                return !(ny>=0 && ny<H && nx>=0 && nx<W && grid[ny][nx]);
+            });
+
+            f += edge ? "%" : "@";
+            b += NB;
+
+        } else {
+            f += NB;
+
+            let d = Math.hypot(
+                (x-19.5)/19.5,
+                (y-11.5)/11.5
+            );
+
+            if(d<1 && rnd()<0.85-0.65*d) {
+                let ramp = d<0.6 ? ".·:+" : ".·.:";
+                b += ramp[Math.floor(rnd()*ramp.length)];
+            } else {
+                b += NB;
+            }
+        }
+    }
+
+    bg.push(b);
+    fg.push(f);
+}
+
+document.getElementById("asciiArt").textContent =
+    bg.map((line,i) => line + "\n" + fg[i]).join("\n");
+
+
+/* ROLE ANIMATION */
+
+const roles = [
+    "Full-Stack Developer",
+    "MERN Stack Builder",
+    "AI / RAG Builder"
+];
+
+const roleElement = document.getElementById("role");
+
+let roleIndex = 0;
+let charIndex = 0;
+let deleting = false;
+
+function typeRole() {
+
+    let current = roles[roleIndex];
+
+    if(!deleting) {
+        roleElement.textContent =
+            current.substring(0,charIndex+1);
+
+        charIndex++;
+
+        if(charIndex === current.length) {
+            deleting = true;
+            setTimeout(typeRole,1500);
+            return;
+        }
+
+    } else {
+
+        roleElement.textContent =
+            current.substring(0,charIndex-1);
+
+        charIndex--;
+
+        if(charIndex === 0) {
+            deleting = false;
+            roleIndex = (roleIndex+1)%roles.length;
+        }
+    }
+
+    setTimeout(typeRole,deleting ? 45 : 90);
+}
+
+typeRole();
+
+
+/* THEME TOGGLE */
+
+function toggleTheme() {
+    document.body.classList.toggle("dark");
+    document.body.classList.toggle("light");
+}
+</script>
+
+</body>
+</html>
