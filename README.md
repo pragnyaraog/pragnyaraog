@@ -66,8 +66,9 @@ export default pragnya;
 </td>
 <td width="50%" align="center" valign="middle">
 
-<div align="center">
-  <img src="./assets/girl_coding.gif" width="300" />
+
+ <div align="center">
+  <img src="./girl_coding.gif" width="300" />
 </div>
 
 <br/>
