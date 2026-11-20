@@ -48,15 +48,15 @@ const pragnya = {
   degree   : "B.Tech CSE @ KITSW '27",
   cgpa     : 9.17,
   focus    : ["Full Stack Development", "REST APIs",
-              "Data Structures & Algorithms", "DBMS"],
+              "Data Structures & Algorithms", "AI/ML"],
 
   exploring: ["RAG", "LLMs", "Cloud"],
 
   achievements: [
+    "DRDL Intern: QT-based network program for aerospace applications",
     "Salesforce Agentforce Specialist",
     "Google Cloud Computing Foundations",
-    "Represented KITSW at National Basketball Tournament",
-    "Organized a tech event with 30+ participants",
+    "Selected to represent KITSW at National Basketball Tournament"
   ],
 };
 
@@ -66,7 +66,7 @@ export default pragnya;
 </td>
 <td width="50%" align="center" valign="middle">
 
-<img src="https://raw.githubusercontent.com/abhisheknaiidu/abhisheknaiidu/master/code.gif" width="100%" style="border-radius:8px" />
+<img src="./girl-coding.svg" width="100%" alt="Girl coding on a laptop" />
 
 <br/>
 
@@ -86,31 +86,31 @@ export default pragnya;
 ```
 // Languages
 ```
-<img src="https://skillicons.dev/icons?i=java,py&theme=dark&perline=2" />
+<img src="https://skillicons.dev/icons?i=java,py,js,c,php&theme=dark&perline=5" />
 
 <!-- Backend -->
 ```
 // Backend
 ```
-<img src="https://skillicons.dev/icons?i=nodejs,express&theme=dark&perline=2" />
+<img src="https://skillicons.dev/icons?i=fastapi,nodejs,express&theme=dark&perline=3" />
 
 <!-- Frontend -->
 ```
 // Frontend & UI
 ```
-<img src="https://skillicons.dev/icons?i=react,html,css&theme=dark&perline=3" />
+<img src="https://skillicons.dev/icons?i=react,nextjs,tailwind,html,css,figma&theme=dark&perline=6" />
 
 <!-- Databases -->
 ```
 // Databases
 ```
-<img src="https://skillicons.dev/icons?i=mysql,mongodb,supabase&theme=dark&perline=3" />
+<img src="https://skillicons.dev/icons?i=mysql,postgres,mongodb,supabase&theme=dark&perline=4" />
 
 <!-- Tools -->
 ```
 // Tools & Deployment
 ```
-<img src="https://skillicons.dev/icons?i=git,github,postman,vscode,vercel&theme=dark&perline=5" />
+<img src="https://skillicons.dev/icons?i=vercel,postman,github,git&theme=dark&perline=4" />
 
 <br/>
 
